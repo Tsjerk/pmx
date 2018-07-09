@@ -98,10 +98,10 @@ class Jarz(object):
 
         bias_smalln_near = wdism / (N ** alpha_bias)
         bias_largen_near = (np.exp(2 * beta * wdism) - 1) / (2 * beta * N)
-        bias_largen_arbi = 0.5 * varw / (beta * np.exp(-2 * beta * dg) * N)
+        bias_largen_arbi = 0.5 * np.exp(-beta * w).var() / (beta * np.exp(-2 * beta * dg) * N)
 
         ## Variance
-        var_smalln_near = varw / (N ** alpha_var)
+        var_smalln_near = (varw ** 2) / (N ** alpha_var)
         var_largen_near = 2 * bias_largen_near / beta
         var_largen_arbi = 2 * bias_largen_arbi / beta
 

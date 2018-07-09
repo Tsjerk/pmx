@@ -42,8 +42,17 @@ class Jarz(object):
         self.nblocks = nblocks
 
         # Calculate all Jarz properties available
-        self.dg_for = self.calc_dg(w=self.wf, c=1.0, T=self.T)
-        self.dg_rev = -1.0 * self.calc_dg(w=self.wr, c=-1.0, T=self.T)
+        # forward
+        dg, bias, var = self.calc_dg(w=self.wf, c=1.0, T=self.T)
+        self.dg_for = dg
+        self.bias_for = bias
+        self.var_for = var
+
+        dg, bias, var = self.calc_dg(w=self.wr, c=-1.0, T=self.T)
+        self.dg_rev = -1.0 * dg
+        self.bias_rev = bias
+        self.var_rev = var
+
         self.dg_mean = (self.dg_for + self.dg_rev) * 0.5
 
         if nboots > 0:
@@ -96,8 +105,12 @@ class Jarz(object):
         var_largen_near = 2 * bias_largen_near / beta
         var_largen_arbi = 2 * bias_largen_arbi / beta
 
-        return dg
-
+        return (
+            dg, 
+            {"nearlarge": bias_large_near, "arbilarge": bias_large_arbi, "nearsmall": bias_small_near},
+            {"nearlarge": var_large_near, "arbilarge": var_large_arbi, "nearsmall": var_small_near}
+        )
+        
     @staticmethod
     def calc_err_boot(w, T, c, nboots):
         '''Calculates the standard error via bootstrap. The work values are
@@ -130,7 +143,8 @@ class Jarz(object):
             sys.stdout.flush()
 
             boot = np.random.choice(w, size=n, replace=True)
-            dg_boot = -1.0 * Jarz.calc_dg(boot, T, c)
+            dg, bias, var = Jarz.calc_dg(boot, T, c)
+            dg_boot = -1.0 * dg
             dg_boots.append(dg_boot)
         sys.stdout.write('\n')
         err = np.std(dg_boots)
@@ -163,7 +177,8 @@ class Jarz(object):
 
         # calculate all dg
         for w_block in w_split:
-            dg_block = -1.0 * Jarz.calc_dg(w_block, T, c)
+            dg, bias, var = Jarz.calc_dg(w_block, T, c)
+            dg_block = -1.0 * dg
             dg_blocks.append(dg_block)
 
         # get std err

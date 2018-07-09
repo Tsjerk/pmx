@@ -808,6 +808,33 @@ def main(args):
                                                                 p=prec, u=units))
         _tee(out, '  JARZ: dG Mean    = {dg:8.{p}f} {u}'.format(dg=jarz.dg_mean*unit_fact,
                                                                 p=prec, u=units))
+
+        _tee(out, '  JARZ: dG Bias(fL) = {dg:8.{p}f} {u}'.format(dg=jarz.bias_for["nearlarge"] * unit_fact,
+                                                                p=prec, u=units))
+        _tee(out, '  JARZ: dG Bias(fS) = {dg:8.{p}f} {u}'.format(dg=jarz.bias_for["nearsmall"] * unit_fact,
+                                                                p=prec, u=units))
+        _tee(out, '  JARZ: dG Bias(fA) = {dg:8.{p}f} {u}'.format(dg=jarz.bias_for["arbilarge"] * unit_fact,
+                                                                p=prec, u=units))
+        _tee(out, '  JARZ: dG Bias(rL) = {dg:8.{p}f} {u}'.format(dg=jarz.bias_rev["nearlarge"] * unit_fact,
+                                                                p=prec, u=units))
+        _tee(out, '  JARZ: dG Bias(rS) = {dg:8.{p}f} {u}'.format(dg=jarz.bias_rev["nearsmall"] * unit_fact,
+                                                                p=prec, u=units))
+        _tee(out, '  JARZ: dG Bias(rA) = {dg:8.{p}f} {u}'.format(dg=jarz.bias_rev["arbilarge"] * unit_fact,
+                                                                p=prec, u=units))
+
+        _tee(out, '  JARZ: dG Var(fL) = {dg:8.{p}f} {u}'.format(dg=jarz.var_for["nearlarge"] * unit_fact**2,
+                                                                p=prec, u=units))
+        _tee(out, '  JARZ: dG Var(fS) = {dg:8.{p}f} {u}'.format(dg=jarz.var_for["nearsmall"] * unit_fact**2,
+                                                                p=prec, u=units))
+        _tee(out, '  JARZ: dG Var(fA) = {dg:8.{p}f} {u}'.format(dg=jarz.var_for["arbilarge"] * unit_fact**2,
+                                                                p=prec, u=units))
+        _tee(out, '  JARZ: dG Var(rL) = {dg:8.{p}f} {u}'.format(dg=jarz.var_rev["nearlarge"] * unit_fact**2,
+                                                                p=prec, u=units))
+        _tee(out, '  JARZ: dG Var(rS) = {dg:8.{p}f} {u}'.format(dg=jarz.var_rev["nearsmall"] * unit_fact**2,
+                                                                p=prec, u=units))
+        _tee(out, '  JARZ: dG Var(rA) = {dg:8.{p}f} {u}'.format(dg=jarz.var_rev["arbilarge"] * unit_fact**2,
+                                                                p=prec, u=units))
+
         if nboots > 0:
             _tee(out, '  JARZ: Std Err Forward (bootstrap) = {e:8.{p}f} {u}'.format(e=jarz.err_boot_for*unit_fact,
                                                                                     p=prec, u=units))

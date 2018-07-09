@@ -277,7 +277,7 @@ def plot_work_dist(wf, wr, fname='Wdist.png', nbins=20, dG=None, dGerr=None,
     plt.plot(x2, sm2, 'b-', linewidth=3)
     plt.legend(shadow=True, fancybox=True, loc='upper center',
                prop={'size': 12})
-    plt.ylabel(r'W [kJ/mol]', fontsize=20)
+    plt.ylabel(r'W [{}]'.format(units), fontsize=20)
     plt.xlabel(r'# Snapshot', fontsize=20)
     plt.grid(lw=2)
     plt.xlim(0, x[-1]+1)
@@ -826,6 +826,8 @@ def main(args):
     # -----------------------
     # plot work distributions
     # -----------------------
+    res_ab *= unit_fact
+    res_ba *= unit_fact
     if args.wplot.lower() is not 'none':
         print('\n   Plotting histograms......')
         # hierarchy of estimators: BAR > Crooks > Jarz
@@ -842,7 +844,8 @@ def main(args):
             plot_work_dist(fname=args.wplot, wf=res_ab, wr=res_ba, dG=show_dg,
                            dGerr=show_err, nbins=args.nbins, dpi=args.dpi,
                            units=units)
-        elif 'bar' not in locals() and 'cgi' in locals():
+
+        elif 'cgi' in locals():
             show_dg = cgi.dg * unit_fact
             # hierarchy of error estimates : blocks > boots
             if hasattr(cgi, 'err_blocks'):
@@ -855,7 +858,8 @@ def main(args):
             plot_work_dist(fname=args.wplot, wf=res_ab, wr=res_ba, dG=show_dg,
                            dGerr=show_err, nbins=args.nbins, dpi=args.dpi,
                            units=units)
-        elif 'bar' not in locals() and 'cgi' not in locals() and 'jarz' in locals():
+
+        elif 'jarz' in locals():
             # for the moment, show values only under specific circumstances
             if hasattr(jarz, 'dg_mean'):
                 show_dg = jarz.dg_mean * unit_fact

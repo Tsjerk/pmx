@@ -92,7 +92,7 @@ class Jarz(object):
         dg2 = w.mean() - wdism
 
         ## Bias
-        N = w.shape.size
+        N = w.size
         alpha_bias = np.log(2 * beta * cbias * wdism) / np.log(cbias * (np.exp(2 * beta * wdism) - 1))
         alpha_var = np.log(2 * beta * cvar * wdism) / np.log(cvar * (np.exp(2 * beta * wdism) - 1))
 

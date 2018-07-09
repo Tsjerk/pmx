@@ -64,24 +64,22 @@ class Jarz(object):
     def calc_dg(w, T, c):
         '''to be filled
         '''
+        w = np.array(w)
+
         beta = 1./(kb*T)
-        n = float(len(w))
-        mexp = 0.0
-        m = 0.0
-        m2 = 0.0
-        for i in w:
-            mexp = mexp + np.exp(-beta*c*i)
-            m = m + c*i
-            m2 = m2 + i*i
-        mexp = mexp/n
-        m = m/n
-        m2 = m2/n
-        var = (m2-m*m)*(n/(n-1))
+
+        m = c * w.mean()
+        var = w.var()
+
         # Jarzynski estimator
-        dg = -kb*T*np.log(mexp)
+        dg = -kb * T * np.log( np.exp(-beta * c * w).mean() )
+
         # Fluctuation-Dissipation estimator
         # FIXME: unused atm, remove or return?
         dg2 = m - beta*var/2.0
+
+        # Bias
+        
 
         return dg
 

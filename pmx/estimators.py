@@ -61,25 +61,40 @@ class Jarz(object):
                                                        nblocks=nblocks)
 
     @staticmethod
-    def calc_dg(w, T, c):
+    def calc_dg(w, T, c, small=15):
         '''to be filled
         '''
-        w = np.array(w)
+
+        # For equations on bias/variance check Gore et al. PNAS 100:22:12564 (2003)
+        w = c * np.array(w)
 
         beta = 1./(kb*T)
 
-        m = c * w.mean()
-        var = w.var()
-
         # Jarzynski estimator
-        dg = -kb * T * np.log( np.exp(-beta * c * w).mean() )
+        dg = -kb * T * np.log( np.exp(-beta * w).mean() )
+
+        ## Dissipated work
+        varw = w.var()
+        wdism = 0.5 * beta * varw
+        wdis = w - dg
 
         # Fluctuation-Dissipation estimator
         # FIXME: unused atm, remove or return?
-        dg2 = m - beta*var/2.0
+        dg2 = w.mean() - wdism
 
-        # Bias
-        
+        ## Bias
+        N = w.shape.size
+        alpha = np.log(2 * beta * small * wdism) / np.log(small * (np.exp(2 * beta * wdism) - 1))
+        Na = N ** alpha
+
+        bias_smalln_near = wdism / Na
+        bias_largen_near = (np.exp(2 * beta * wdism) - 1) / (2 * beta * N)
+        bias_largen_arbi = 0.5 * varw / (beta * np.exp(-2 * beta * dg) * N)
+
+        ## Variance
+        var_smalln_near = varw / Na
+        var_largen_near = 2 * bias_largen_near / beta
+        var_largen_arbi = 2 * bias_largen_arbi / beta
 
         return dg
 

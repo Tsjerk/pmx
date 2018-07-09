@@ -107,8 +107,8 @@ class Jarz(object):
 
         return (
             dg, 
-            {"nearlarge": bias_large_near, "arbilarge": bias_large_arbi, "nearsmall": bias_small_near},
-            {"nearlarge": var_large_near, "arbilarge": var_large_arbi, "nearsmall": var_small_near}
+            {"nearlarge": bias_largen_near, "arbilarge": bias_largen_arbi, "nearsmall": bias_smalln_near},
+            {"nearlarge": var_largen_near, "arbilarge": var_largen_arbi, "nearsmall": var_smalln_near}
         )
         
     @staticmethod

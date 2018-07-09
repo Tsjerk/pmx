@@ -70,7 +70,7 @@ class Jarz(object):
                                                        nblocks=nblocks)
 
     @staticmethod
-    def calc_dg(w, T, c, small=15):
+    def calc_dg(w, T, c, cbias=15, cvar=50):
         '''to be filled
         '''
 
@@ -93,15 +93,15 @@ class Jarz(object):
 
         ## Bias
         N = w.shape.size
-        alpha = np.log(2 * beta * small * wdism) / np.log(small * (np.exp(2 * beta * wdism) - 1))
-        Na = N ** alpha
+        alpha_bias = np.log(2 * beta * cbias * wdism) / np.log(cbias * (np.exp(2 * beta * wdism) - 1))
+        alpha_var = np.log(2 * beta * cvar * wdism) / np.log(cvar * (np.exp(2 * beta * wdism) - 1))
 
-        bias_smalln_near = wdism / Na
+        bias_smalln_near = wdism / (N ** alpha_bias)
         bias_largen_near = (np.exp(2 * beta * wdism) - 1) / (2 * beta * N)
         bias_largen_arbi = 0.5 * varw / (beta * np.exp(-2 * beta * dg) * N)
 
         ## Variance
-        var_smalln_near = varw / Na
+        var_smalln_near = varw / (N ** alpha_var)
         var_largen_near = 2 * bias_largen_near / beta
         var_largen_arbi = 2 * bias_largen_arbi / beta
 

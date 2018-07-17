@@ -76,14 +76,15 @@ class Jarz(object):
 
         # For equations on bias/variance check Gore et al. PNAS 100:22:12564 (2003)
         w = c * np.array(w)
+        N = w.size
 
-        beta = 1./(kb*T)
+        beta = 1. / (kb * T)
 
         # Jarzynski estimator
-        dg = -kb * T * np.log( np.exp(-beta * w).mean() )
+        dg = -np.log( np.exp(-beta * w).mean() ) / beta
 
         ## Dissipated work
-        varw = w.var()
+        varw = w.var(ddof = 1)
         wdism = 0.5 * beta * varw
         wdis = w - dg
 
@@ -92,12 +93,12 @@ class Jarz(object):
         dg2 = w.mean() - wdism
 
         ## Bias
-        N = w.size
-        alpha_bias = np.log(2 * beta * cbias * wdism) / np.log(cbias * (np.exp(2 * beta * wdism) - 1))
-        alpha_var = np.log(2 * beta * cvar * wdism) / np.log(cvar * (np.exp(2 * beta * wdism) - 1))
+        expw = np.exp(2 * beta * wdism)
+        alpha_bias = np.log(2 * beta * cbias * wdism) / np.log(cbias * (expw - 1))
+        alpha_var = np.log(2 * beta * cvar * wdism) / np.log(cvar * (expw - 1))
 
         bias_smalln_near = wdism / (N ** alpha_bias)
-        bias_largen_near = (np.exp(2 * beta * wdism) - 1) / (2 * beta * N)
+        bias_largen_near = (expw - 1) / (2 * beta * N)
         bias_largen_arbi = 0.5 * np.exp(-beta * w).var() / (beta * np.exp(-2 * beta * dg) * N)
 
         ## Variance

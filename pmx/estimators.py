@@ -112,6 +112,30 @@ class Jarz(object):
             {"nearlarge": var_largen_near, "arbilarge": var_largen_arbi, "nearsmall": var_smalln_near}
         )
         
+
+    @staticmethod
+    def jm_boot_err(wf, wr, T, nboots):
+        """
+        Calculate the JM error from bootstrapped JF and JB samples
+        """
+        bootf = Jarz.dg_boot(wf, T,  1.0, nboots)
+        bootr = Jarz.dg_boot(wr, T, -1.0, nboots)
+        return (0.5*(np.array(bootf) + bootr)).std(ddof=1)
+
+
+    @staticmethod
+    def dg_boot(w, T, c, nboots):
+        """
+        Calculate a sample of bootstrapped dG values
+        """
+        dg_boots = []
+        for k in range(nboots):
+            sample = np.random.choice(w, size=len(w), replace=True)
+            dg, bias, var = Jarz.calc_dg(sample, T, c)
+            dg_boots.append(c * dg)
+        return dg_boots
+
+
     @staticmethod
     def calc_err_boot(w, T, c, nboots):
         '''Calculates the standard error via bootstrap. The work values are
@@ -145,7 +169,7 @@ class Jarz(object):
 
             boot = np.random.choice(w, size=n, replace=True)
             dg, bias, var = Jarz.calc_dg(boot, T, c)
-            dg_boot = -1.0 * dg
+            dg_boot = c * dg
             dg_boots.append(dg_boot)
         sys.stdout.write('\n')
         err = np.std(dg_boots)

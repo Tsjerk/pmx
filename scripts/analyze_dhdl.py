@@ -859,6 +859,9 @@ def main(args):
             _tee(out, '  JARZ: Std Err Reverse (bootstrap) = {e:8.{p}f} {u}'.format(e=jarz.err_boot_rev*unit_fact,
                                                                                     p=prec, u=units))
 
+            _tee(out, '  JARZ: Std Err Mean (bootstrap) = {e:8.{p}f} {u}'.format(e=jarz.err_boot_mean*unit_fact,
+                                                                                    p=prec, u=units))
+
         if nblocks > 1:
             _tee(out, '  JARZ: Std Err Forward (blocks) = {e:8.{p}f} {u}'.format(e=jarz.err_blocks_for*unit_fact,
                                                                                  p=prec, u=units))

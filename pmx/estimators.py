@@ -43,15 +43,17 @@ class Jarz(object):
 
         # Calculate all Jarz properties available
         # forward
-        dg, bias, var = self.calc_dg(w=self.wf, c=1.0, T=self.T)
+        dg, bias, var, mse = self.calc_dg(w=self.wf, c=1.0, T=self.T)
         self.dg_for = dg
         self.bias_for = bias
         self.var_for = var
+        self.mse_for = mse
 
-        dg, bias, var = self.calc_dg(w=self.wr, c=-1.0, T=self.T)
+        dg, bias, var, mse = self.calc_dg(w=self.wr, c=-1.0, T=self.T)
         self.dg_rev = -1.0 * dg
         self.bias_rev = bias
         self.var_rev = var
+        self.mse_rev = mse
 
         self.dg_mean = (self.dg_for + self.dg_rev) * 0.5
 
@@ -60,6 +62,7 @@ class Jarz(object):
                                                    c=1.0, nboots=nboots)
             self.err_boot_rev = self.calc_err_boot(w=self.wr, T=self.T,
                                                    c=-1.0, nboots=nboots)
+            self.err_boot_mean = self.jm_boot_err(self.wf, self.wr, self.T, nboots)
 
         if nblocks > 1:
             self.err_blocks_for = self.calc_err_blocks(w=self.wf, c=1.0,
@@ -106,10 +109,16 @@ class Jarz(object):
         var_largen_near = 2 * bias_largen_near / beta
         var_largen_arbi = 2 * bias_largen_arbi / beta
 
+        ## MSE
+        mse_smalln_near = var_smalln_near + bias_smalln_near ** 2
+        mse_largen_near = var_largen_near
+        mse_largen_arbi = var_largen_arbi
+
         return (
             dg, 
             {"nearlarge": bias_largen_near, "arbilarge": bias_largen_arbi, "nearsmall": bias_smalln_near},
-            {"nearlarge": var_largen_near, "arbilarge": var_largen_arbi, "nearsmall": var_smalln_near}
+            {"nearlarge": var_largen_near, "arbilarge": var_largen_arbi, "nearsmall": var_smalln_near},
+            {"nearlarge": mse_largen_near, "arbilarge": mse_largen_arbi, "nearsmall": mse_smalln_near}
         )
         
 
@@ -168,7 +177,7 @@ class Jarz(object):
             sys.stdout.flush()
 
             boot = np.random.choice(w, size=n, replace=True)
-            dg, bias, var = Jarz.calc_dg(boot, T, c)
+            dg, bias, var, mse = Jarz.calc_dg(boot, T, c)
             dg_boot = c * dg
             dg_boots.append(dg_boot)
         sys.stdout.write('\n')
@@ -202,7 +211,7 @@ class Jarz(object):
 
         # calculate all dg
         for w_block in w_split:
-            dg, bias, var = Jarz.calc_dg(w_block, T, c)
+            dg, bias, var, mse = Jarz.calc_dg(w_block, T, c)
             dg_block = -1.0 * dg
             dg_blocks.append(dg_block)
 
